@@ -1,0 +1,96 @@
+
+--STEPS TO CREATE OBJECT COLUMNS IN TABLES
+--Step 1: Create Type
+CREATE OR REPLACE TYPE object_type_name AS OBJECT(
+attribute DATATYPE(SIZE),
+attribute DATATYPE(SIZE),
+attrubute DATATYPE(SIZE));
+
+--Step 2: use in Table Definition
+CREATE TABLE table_name(
+attribute DATATYPE(SIZE),
+attribute object_type_name );
+
+--Create Object Types
+CREATE OR REPLACE TYPE address_type AS OBJECT(
+street VARCHAR2(25),
+city VARCHAR2(25),
+country VARCHAR2(20));
+/
+SHOW ERRORS
+
+
+CREATE TABLE sites(
+    site_id NUMBER(6),
+    address address_type
+);
+
+CREATE OR REPLACE TYPE company_type AS OBJECT (
+company_name VARCHAR2(25),
+training_budget NUMBER(10,2),
+address address_type );
+/
+
+--Step 1: Create Type
+CREATE OR REPLACE TYPE object_type_name AS OBJECT(
+attribute DATATYPE(SIZE),
+attrubute DATATYPE(SIZE),
+attribute DATATYPE(size));
+/
+--Step 2: Use as an object Table Definition
+CREATE TABLE object_table_name OF object_type_name;
+
+--Step 3: Use in Relational Table Definition
+CREATE TABLE table_name(
+attribute DATATYPE(SIZE),
+attribute object_type_name,
+attribute REF object_type_name
+              SCOPE IS object_table_name);
+
+CREATE TABLE addresses OF address_type;
+
+--Referencing Object Tables in Relational Tables
+CREATE TABLE instructors(
+instructor_id NUMBER(6),
+address REF address_type SCOPE IS addresses);
+
+ALTER TABLE instructors 
+ADD (address REF address_type SCOPE IS addresses);
+
+--Drop Object Tables
+DROP TABLE table_name;
+
+--SIMPLE VARRAY
+--use a simple datatype in the definition
+CREATE TYPE varray_type_name AS
+VARRAY(size) OF datatype;
+
+CREATE TYPE name_varray_type AS 
+VARRAY(10) OF VARCHAR2(20);
+/
+
+--MULTIDIMENSIONAL VARRAY
+--step 1: Create the type
+CREATE TYPE object_type_name AS OBJECT (
+attribute_name DATATYPE(SIZE),
+attribute_name DATATYPE(SIZE),
+attribute_name DATATYPE(SIZE));
+/
+
+--step 2: use the type definition to create the varray
+CREATE TYPE varray_type_name AS
+VARRAY(size) OF object_type_name;
+/
+
+--USING ARRAYS
+--may be referenced in original definition
+CREATE TABLE sites(
+site_id NUMBER(6),
+classroom classroom_varray_type);
+
+--may be added to existing relational table
+--Using ALTER statement
+
+ALTER TABLE sites
+ADD (classroom classroom_varray_type);
+
