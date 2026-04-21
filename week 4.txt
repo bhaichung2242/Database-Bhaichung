@@ -94,3 +94,23 @@ classroom classroom_varray_type);
 ALTER TABLE sites
 ADD (classroom classroom_varray_type);
 
+--Steps to Creating Nested Table
+--Step 1: Create the object type
+CREATE TYPE object_type_name AS OBJECT(
+attribute_name DATATYPE(SIZE),
+attribute_name DATATYPE(SIZE),
+attribute_name DATETYPE(SIZE));
+/
+
+--Step 2: Use the definition to create the nested table object type
+CREATE TYPE object_table_type_name
+AS TABLE OF object_type_name;
+/
+
+Steps 3: Use the nested table in a relational table
+CREATE TABLE relational_table_name(
+column_name DATATYPE(SIZE),
+column_name DATATYPE(SIZE),
+column_name object_table_type_name)
+NESTED TABLE needed_column_name STORE AS nested_table_object_name;
+
