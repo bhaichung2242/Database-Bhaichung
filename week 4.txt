@@ -1,4 +1,4 @@
-
+g
 --STEPS TO CREATE OBJECT COLUMNS IN TABLES
 --Step 1: Create Type
 CREATE OR REPLACE TYPE object_type_name AS OBJECT(
@@ -88,13 +88,13 @@ CREATE TABLE sites(
 site_id NUMBER(6),
 classroom classroom_varray_type);
 
---may be added to existing relational table
+--may be added to the existing relational table
 --Using ALTER statement
 
 ALTER TABLE sites
 ADD (classroom classroom_varray_type);
 
---Steps to Creating Nested Table
+--Steps to Creating a Nested Table
 --Step 1: Create the object type
 CREATE TYPE object_type_name AS OBJECT(
 attribute_name DATATYPE(SIZE),
@@ -107,7 +107,7 @@ CREATE TYPE object_table_type_name
 AS TABLE OF object_type_name;
 /
 
-Steps 3: Use the nested table in a relational table
+Step 3: Use the nested table in a relational table
 CREATE TABLE relational_table_name(
 column_name DATATYPE(SIZE),
 column_name DATATYPE(SIZE),
