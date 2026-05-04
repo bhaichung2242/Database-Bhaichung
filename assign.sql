@@ -1,6 +1,6 @@
--- ============================================
--- OBJECT TYPE
--- ============================================
+-- =====================================================
+-- 1. OBJECT TYPES
+-- =====================================================
 
 CREATE OR REPLACE TYPE location_type AS OBJECT(
     road VARCHAR2(25),
@@ -8,22 +8,25 @@ CREATE OR REPLACE TYPE location_type AS OBJECT(
     nation VARCHAR2(20)
 );
 /
-SHOW ERRORS;
 
-
--- Object inside another object
 CREATE OR REPLACE TYPE organization_type AS OBJECT(
     org_name VARCHAR2(25),
     budget NUMBER(10,2),
     location location_type
 );
 /
-SHOW ERRORS;
 
+CREATE OR REPLACE TYPE staff_obj AS OBJECT(
+    staff_id NUMBER,
+    staff_name VARCHAR2(30),
+    salary NUMBER,
+    join_date DATE
+);
+/
 
--- ============================================
--- TABLE WITH OBJECT COLUMN
--- ============================================
+-- =====================================================
+-- 2. TABLE WITH OBJECT COLUMN
+-- =====================================================
 
 CREATE TABLE branches (
     branch_id NUMBER(6),
@@ -31,19 +34,16 @@ CREATE TABLE branches (
 );
 
 INSERT INTO branches VALUES (
-    1,
-    location_type('Baker Street', 'London', 'UK')
+    1, location_type('Baker Street', 'London', 'UK')
 );
 
 INSERT INTO branches VALUES (
-    2,
-    location_type('MG Road', 'Bangalore', 'India')
+    2, location_type('MG Road', 'Bangalore', 'India')
 );
 
-
--- ============================================
--- TABLE WITH COMPLEX OBJECT
--- ============================================
+-- =====================================================
+-- 3. COMPLEX OBJECT TABLE
+-- =====================================================
 
 CREATE TABLE organizations (
     org_id NUMBER,
@@ -59,18 +59,9 @@ INSERT INTO organizations VALUES (
     )
 );
 
-
--- ============================================
--- OBJECT TABLE
--- ============================================
-
-CREATE OR REPLACE TYPE staff_obj AS OBJECT(
-    staff_id NUMBER,
-    staff_name VARCHAR2(30),
-    salary NUMBER,
-    join_date DATE
-);
-/
+-- =====================================================
+-- 4. OBJECT TABLE
+-- =====================================================
 
 CREATE TABLE staff_members OF staff_obj;
 
@@ -78,10 +69,9 @@ INSERT INTO staff_members VALUES (staff_obj(201, 'Michael Lee', 45000, DATE '202
 INSERT INTO staff_members VALUES (staff_obj(202, 'Sara Khan', 52000, DATE '2020-07-18'));
 INSERT INTO staff_members VALUES (staff_obj(203, 'David Kim', 48000, DATE '2022-09-25'));
 
-
--- ============================================
--- VARRAY
--- ============================================
+-- =====================================================
+-- 5. VARRAY TYPES
+-- =====================================================
 
 CREATE OR REPLACE TYPE mobile_varray AS VARRAY(3) OF VARCHAR2(15);
 /
@@ -108,18 +98,9 @@ INSERT INTO clients VALUES (
     label_varray('Premium', 'Active')
 );
 
-INSERT INTO clients VALUES (
-    2,
-    'Alice Green',
-    mobile_varray('9002001'),
-    mail_varray('alice@mail.com'),
-    label_varray('New')
-);
-
-
--- ============================================
--- VARRAY OF OBJECTS
--- ============================================
+-- =====================================================
+-- 6. VARRAY OF OBJECTS
+-- =====================================================
 
 CREATE OR REPLACE TYPE place_obj AS OBJECT(
     road VARCHAR2(25),
@@ -141,15 +122,13 @@ INSERT INTO estates VALUES (
     'Chris Evans',
     place_varray(
         place_obj('Hill Road', 'Mumbai'),
-        place_obj('Lake View', 'Zurich'),
-        place_obj('Green Street', 'Toronto')
+        place_obj('Lake View', 'Zurich')
     )
 );
 
-
--- ============================================
--- NESTED TABLE
--- ============================================
+-- =====================================================
+-- 7. NESTED TABLE
+-- =====================================================
 
 CREATE OR REPLACE TYPE product_obj AS OBJECT(
     item_id NUMBER,
@@ -175,21 +154,20 @@ INSERT INTO purchases VALUES (
     'Daniel Craig',
     DATE '2025-03-12',
     product_table_type(
-        product_obj(301, 'Tablet', 1, 450.00),
-        product_obj(302, 'Charger', 2, 20.00)
+        product_obj(301, 'Tablet', 1, 450),
+        product_obj(302, 'Charger', 2, 20)
     )
 );
 
--- Insert into nested table separately
+-- Insert into nested table
 INSERT INTO TABLE(
     SELECT products FROM purchases WHERE purchase_id = 5001
 )
-VALUES (product_obj(303, 'Headphones', 1, 80.00));
+VALUES (product_obj(303, 'Headphones', 1, 80));
 
-
--- ============================================
--- NESTED TABLE WITH ADDRESS OBJECT
--- ============================================
+-- =====================================================
+-- 8. VARRAY OF OBJECTS
+-- =====================================================
 
 CREATE OR REPLACE TYPE place_full_obj AS OBJECT(
     road VARCHAR2(25),
@@ -213,7 +191,69 @@ INSERT INTO users VALUES (
     'Tom Hardy',
     place_table_type(
         place_full_obj('King St', 'Sydney', 'Australia'),
-        place_full_obj('Queen Rd', 'Toronto', 'Canada'),
-        place_full_obj('Park Lane', 'London', 'UK')
+        place_full_obj('Queen Rd', 'Toronto', 'Canada')
     )
 );
+
+-- =====================================================
+-- 9. REF & DEREF (IMPORTANT EXTRA CONCEPT)
+-- =====================================================
+
+CREATE TABLE staff_table OF staff_obj;
+
+CREATE TABLE staff_ref_table (
+    ref_staff REF staff_obj
+);
+
+INSERT INTO staff_ref_table
+SELECT REF(s)
+FROM staff_table s
+WHERE s.staff_id = 201;
+
+-- =====================================================
+-- 10. SELECT QUERIES
+-- =====================================================
+
+-- Object column
+SELECT b.location.town
+FROM branches b;
+
+-- Nested object
+SELECT o.org_info.location.nation
+FROM organizations o;
+
+-- VARRAY
+SELECT c.client_id, m.COLUMN_VALUE
+FROM clients c, TABLE(c.mobiles) m;
+
+-- VARRAY of objects
+SELECT e.estate_id, p.road, p.town
+FROM estates e, TABLE(e.places) p;
+
+-- Nested table
+SELECT p.purchase_id, pr.item_name
+FROM purchases p, TABLE(p.products) pr;
+
+-- Nested object table
+SELECT u.user_id, l.road, l.town, l.nation
+FROM users u, TABLE(u.places) l;
+
+-- REF query
+SELECT DEREF(r.ref_staff).staff_name
+FROM staff_ref_table r;
+
+-- =====================================================
+-- 11. UPDATE & DELETE
+-- =====================================================
+
+UPDATE branches
+SET location = location_type('New Road', 'Delhi', 'India')
+WHERE branch_id = 1;
+
+DELETE FROM staff_members
+WHERE staff_id = 203;
+
+DELETE FROM TABLE(
+    SELECT products FROM purchases WHERE purchase_id = 5001
+)
+WHERE item_id = 302;
