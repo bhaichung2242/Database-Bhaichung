@@ -195,6 +195,15 @@ INSERT INTO users VALUES (
     )
 );
 
+INSERT INTO users VALUES (
+    4,
+    'Bhaichung',
+    place_table_type(
+        place_full_obj('kdb', 'Sankhuwasabha', 'Nepal'),
+        place_full_obj('drn', 'Sunsari', 'Nepal')
+    )
+);
+
 -- =====================================================
 -- 9. REF & DEREF (IMPORTANT EXTRA CONCEPT)
 -- =====================================================
@@ -257,3 +266,9 @@ DELETE FROM TABLE(
     SELECT products FROM purchases WHERE purchase_id = 5001
 )
 WHERE item_id = 302;
+
+
+-- UNION---
+SELECT purchase_id FROM purchases
+UNION
+SELECT user_id FROM users;

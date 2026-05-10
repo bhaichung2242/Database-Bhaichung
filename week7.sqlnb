@@ -1,0 +1,89 @@
+cells:
+  - kind: 2
+    value: |-
+      SELECT purchase_id FROM purchases
+      UNION
+      SELECT user_id FROM users;
+    languageId: oracle-sql
+  - kind: 2
+    value: |-
+      INSERT INTO users VALUES(
+          4,
+          'Bhaichung',
+          place_table_type(
+              place_full_obj('kdb', 'Sankhuwasabha', 'Nepal'),
+              place_full_obj('drn', 'Sunsari', 'Nepal')
+          )
+      );
+    languageId: oracle-sql
+  - kind: 2
+    value: |-
+      SELECT user_id, name, places
+      FROM users 
+      WHERE user_id > ALL (1,2);
+    languageId: oracle-sql
+  - kind: 2
+    value: |
+      CREATE TABLE staffs(
+          staff_id NUMBER(3),
+          first_name VARCHAR2(25),
+          town VARCHAR2(50),
+          dept VARCHAR2(10),
+          balance NUMBER(10)
+
+      );
+    languageId: oracle-sql
+  - kind: 2
+    value: |-
+      INSERT INTO staffs VALUES (
+          101,'Jane','Northampton','HR',150
+      );
+    languageId: oracle-sql
+  - kind: 2
+    value: |-
+      INSERT INTO staffs VALUES (
+          102,'Lisa','Bendford','IT',120
+      );
+    languageId: oracle-sql
+  - kind: 2
+    value: |-
+      INSERT INTO staffs VALUES (
+          103,'Mo','Olney','HR',180
+      );
+    languageId: oracle-sql
+  - kind: 2
+    value: |-
+      SELECT MIN(balance) FROM staffs;
+      SELECT MAX(balance) FROM staffs;
+      SELECT AVG(balance) FROM staffs;
+      SELECT SUM(balance) FROM staffs;
+    languageId: oracle-sql
+  - kind: 2
+    value: |-
+      SELECT SUM(balance), dept 
+      FROM staffs
+      GROUP BY dept;
+
+      SELECT MIN(balance), dept 
+      FROM staffs
+      GROUP BY dept;
+
+      SELECT MAX(balance), dept 
+      FROM staffs
+      GROUP BY dept;
+
+      SELECT AVG(balance), dept 
+      FROM staffs
+      GROUP BY dept;
+    languageId: oracle-sql
+  - kind: 2
+    value: |-
+      --------HAVING CLAUSE-----------
+      SELECT SUM(balance),AVG(balance),dept
+      FROM staffs
+      GROUP BY dept
+      HAVING AVG(balance)>100;
+    languageId: oracle-sql
+  - kind: 2
+    value: ""
+    languageId: oracle-sql

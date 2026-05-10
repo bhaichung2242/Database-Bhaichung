@@ -1,0 +1,87 @@
+cells:
+  - kind: 2
+    value: |-
+      --CREATING OBJECT TYPE--
+      CREATE OR REPLACE TYPE address_type AS OBJECT(
+          street VARCHAR2(100),
+          city VARCHAR2(100),
+          country VARCHAR2(50)
+      );
+      /
+      SHOW ERRORS;
+    languageId: oracle-sql
+  - kind: 2
+    value: |-
+      --CREATING TABLE WITH OBJECT COLUMN--
+      CREATE TABLE students(
+          id NUMBER(4),
+          firstname VARCHAR2(50),
+          surname VARCHAR2(50),
+          address address_type
+      );
+    languageId: oracle-sql
+  - kind: 2
+    value: |-
+      --INSERTING VALUES
+      INSERT INTO students(id,firstname,surname,address)
+      VALUES(100,'Bhaichung','Lhomi',address_type('Simaltar','Kathmandu','Nepal'));
+
+      INSERT INTO students(id,firstname,surname,address)
+      VALUES(101,'Ram','Rai',address_type('Halesi','Khotang','Nepal'));
+    languageId: oracle-sql
+  - kind: 2
+    value: |-
+      --INTSERTING VLAUES--
+      INSERT INTO students(id,firstname,surname,address)
+      VALUES(103,'Birat','Joshi',address_type('Jorpat','Kathmandu','Nepal'));
+
+      INSERT INTO students(id,firstname,surname,address)
+      VALUES(104,'Hamm','Rai',address_type('kdb','Sankhuwasabha','Nepal'));
+    languageId: oracle-sql
+  - kind: 2
+    value: |-
+      --INSERTING VALUES--
+      INSERT INTO students(id,firstname,surname,address)
+      VALUES(105,'Sita','Sharma',address_type('Pokhara','Kaski','Nepal'));
+
+      INSERT INTO students(id,firstname,surname,address)
+      VALUES(106,'Hari','Thapa',address_type('Biratnagar','Morang','Nepal'));
+
+      INSERT INTO students(id,firstname,surname,address)
+      VALUES(107,'Nima','Sherpa',address_type('Namche','Solukhumbu','Nepal'));
+
+      INSERT INTO students(id,firstname,surname,address)
+      VALUES(108,'Anita','Gurung',address_type('Damauli','Tanahun','Nepal'));
+    languageId: oracle-sql
+  - kind: 2
+    value: |-
+      --SELECT QUERIES--
+      SELECT id,firstname,surname,address
+      FROM students 
+      WHERE firstname LIKE 'B%';
+
+      SELECT id,firstname,surname
+      FROM students 
+      WHERE firstname LIKE 'B%';
+
+      SELECT id,firstname,surname
+      FROM students 
+      WHERE surname LIKE '%i';
+
+      SELECT id,firstname,address
+      FROM students s
+      WHERE s.address.city IN ('Khotang','Kathmandu');
+    languageId: oracle-sql
+  - kind: 2
+    value: |-
+      --SELECT QUERIES--
+      SELECT id,firstname
+      FROM students 
+      WHERE firstname 
+      BETWEEN 'A' AND 'I';
+
+      SELECT id,firstname
+      FROM students 
+      WHERE id
+      BETWEEN 100 AND 105;
+    languageId: oracle-sql
